@@ -41,16 +41,16 @@ class _VisualState extends State<VisualTrainingScreen> {
                 Spacer(),
                 Pill('00:30 dtk', bg: AppColors.surfaceHigh, fg: AppColors.primary, icon: Icons.timer_outlined),
               ]),
-              const SizedBox(height: 8),
-              const Row(children: [
+              SizedBox(height: 8),
+              Row(children: [
                 Expanded(child: AppProgressBar(0.4)), SizedBox(width: 4),
                 Expanded(child: AppProgressBar(0.4)), SizedBox(width: 4),
                 Expanded(child: AppProgressBar(0.0)), SizedBox(width: 4),
                 Expanded(child: AppProgressBar(0.0)), SizedBox(width: 4),
                 Expanded(child: AppProgressBar(0.0)),
               ]),
-              const SizedBox(height: 6),
-              const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              SizedBox(height: 6),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Row(children: [
                   Icon(Icons.view_in_ar, size: 14, color: AppColors.primary),
                   SizedBox(width: 4), Text('Persepsi Ruang & Rotasi Mental', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),

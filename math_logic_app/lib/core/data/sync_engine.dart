@@ -37,18 +37,19 @@ Future<void> _devNullSender(List<Map<String, dynamic>> batch) async {
   print('[sync] ${batch.length} entri siap dikirim (remote belum dikonfigurasi).');
 }
 
+Future<bool> _defaultIsOnline() async {
+  final r = await Connectivity().checkConnectivity();
+  return r.contains(ConnectivityResult.mobile) ||
+      r.contains(ConnectivityResult.wifi) ||
+      r.contains(ConnectivityResult.ethernet);
+}
+
 class SyncEngine {
   static const _key = 'sync_outbox_v1';
   final RemoteSender remote;
   final Future<bool> Function() isOnline;
-  const SyncEngine({this.remote = _devNullSender, Future<bool> Function()? isOnline})
-      : isOnline = isOnline ??
-            (() async {
-              final r = await Connectivity().checkConnectivity();
-              return r.contains(ConnectivityResult.mobile) ||
-                  r.contains(ConnectivityResult.wifi) ||
-                  r.contains(ConnectivityResult.ethernet);
-            });
+  const SyncEngine(
+      {this.remote = _devNullSender, this.isOnline = _defaultIsOnline});
 
   Future<List<OutboxEntry>> pending() async {
     final prefs = await SharedPreferences.getInstance();

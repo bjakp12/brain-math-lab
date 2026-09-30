@@ -71,11 +71,12 @@ void main() {
 
     test('enqueue lalu flush mengosongkan antrean', () async {
       final sent = <Map<String, dynamic>>[];
-      const engine = SyncEngine(
+      // ignore: prefer_const_constructors
+      final engine = SyncEngine(
         isOnline: () async => true,
         remote: (batch) async => sent.addAll(batch),
       );
-      await engine.recordAttempt(Attempt(
+      await engine.recordAttempt(const Attempt(
         topicId: 'ar_penjumlahan',
         tier: 1,
         correct: true,
@@ -90,11 +91,12 @@ void main() {
 
     test('offline menahan antrean', () async {
       var calls = 0;
-      const engine = SyncEngine(
+      // ignore: prefer_const_constructors
+      final engine = SyncEngine(
         isOnline: () async => false,
         remote: (_) async => calls++,
       );
-      await engine.recordAttempt(Attempt(
+      await engine.recordAttempt(const Attempt(
         topicId: 'ge_pythagoras',
         tier: 2,
         correct: false,

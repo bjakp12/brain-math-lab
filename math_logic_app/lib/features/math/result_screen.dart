@@ -138,7 +138,7 @@ class ResultScreen extends ConsumerWidget {
               Text('3 dari 5 benar (2 keliru pada penyebut besar)', style: t.bodySmall),
               const SizedBox(height: 6),
               const AppProgressBar(0.6),
-              TextButton(onPressed: null, child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              const TextButton(onPressed: null, child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Text('Review 2 Soal Salah'), Icon(Icons.arrow_forward, size: 16),
               ])),
             ]),

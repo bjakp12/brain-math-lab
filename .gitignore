@@ -1,2 +1,12 @@
 # File konfigurasi lokal (kredensial tool) — jangan pernah di-commit.
 opencode.json
+
+# Repo kernel tak terkait di root — bukan bagian aplikasi, jangan track.
+android_kernel_samsung_r5q-lineage-17.1/
+android_kernel_samsung_r5q_lineage-17.1/
+android_kernel_samsung_r5q/
+r5q-lineage17/
+
+# Folder eksperimen stray di root (aplikasi lives di math_logic_app/).
+android/
+ios/

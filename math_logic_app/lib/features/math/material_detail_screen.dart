@@ -87,12 +87,12 @@ class MaterialDetailScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(color: scheme.surfaceContainerLow, borderRadius: BorderRadius.circular(12)),
                     child: const Column(children: [
-                      const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         Text('Representasi Nilai Ekuivalen:', style: TextStyle(fontSize: 11)),
                         Text('Nilai Sama', style: TextStyle(fontSize: 11, color: AppColors.primary, fontWeight: FontWeight.w700)),
                       ]),
-                      const SizedBox(height: 6),
-                      const Row(children: [
+                      SizedBox(height: 6),
+                      Row(children: [
                         _FracCell(v: '1/2', s: 'Sederhana', hl: true),
                         SizedBox(width: 6),
                         _FracCell(v: '2/4', s: 'Senilai'),
