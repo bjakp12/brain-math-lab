@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// "stock Android" Material 3 tanpa dynamic-color crash di iOS.
 class AppColors {
   // Primary
-  static const primary = Color(0xFF3525CD);
+  static const primary = Color(0xFF1E1E1E);
   static const onPrimary = Color(0xFFFFFFFF);
   static const primaryContainer = Color(0xFF4F46E5);
   static const onPrimaryContainer = Color(0xFFDAD7FF);
@@ -41,7 +41,7 @@ class AppColors {
   static const onErrorContainer = Color(0xFF93000A);
 
   // Surface hierarchy
-  static const surface = Color(0xFFFCF8FF);
+  static const surface = Color(0xFFF8F9FA);
   static const surfaceDim = Color(0xFFDAD6FF);
   static const surfaceBright = Color(0xFFFCF8FF);
   static const surfaceLowest = Color(0xFFFFFFFF);
@@ -57,11 +57,24 @@ class AppColors {
   static const surfaceTint = Color(0xFF4D44E3);
 
   // Inverse
-  static const inverseSurface = Color(0xFF2D2A5B);
+  static const inverseSurface = Color(0xFF111111);
   static const inverseOnSurface = Color(0xFFF3EEFF);
-  static const inversePrimary = Color(0xFFC3C0FF);
+  static const inversePrimary = Color(0xFFD2CEFF);
   static const background = Color(0xFFFCF8FF);
   static const onBackground = Color(0xFF181445);
+
+  // Stitch live tokens (pastel + charcoal, dari proyek "Brain Training App
+  // Wireframes" per 30 Sep 2026). Dipakai eksplisit untuk aksen pastel agar
+  // token semantik lama (indigo seleksi, hijau sukses, merah error) utuh.
+  static const pastelPurple = Color(0xFFD2CEFF);
+  static const pastelPurpleDeep = Color(0xFF5C5A84);
+  static const pastelYellow = Color(0xFFFFEAA7);
+  static const amberGlow = Color(0xFFD97706);
+  static const cocoaBrown = Color(0xFF78350F);
+  static const inkBlack = Color(0xFF111111);
+  static const lineGray = Color(0xFFEDEEEF);
+  static const successGreen = Color(0xFF10B981);
+  static const coralRed = Color(0xFFFF6B6B);
 
   static ColorScheme lightScheme() {
     return const ColorScheme(

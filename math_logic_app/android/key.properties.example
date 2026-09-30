@@ -1,0 +1,8 @@
+# Salin file ini menjadi android/key.properties lalu isi nilainya.
+# JANGAN commit key.properties (sudah ada di .gitignore).
+# Buat keystore sekali saja:
+#   keytool -genkey -v -keystore android/release.keystore -alias brainmath -keyalg RSA -keysize 2048 -validity 10000
+storePassword=GANTI_STORE_PASSWORD
+keyPassword=GANTI_KEY_PASSWORD
+keyAlias=brainmath
+storeFile=../release.keystore

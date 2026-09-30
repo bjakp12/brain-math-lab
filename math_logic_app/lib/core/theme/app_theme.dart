@@ -59,15 +59,18 @@ class AppTheme {
       scaffoldBackgroundColor: scheme.surface,
       textTheme: _textTheme(scheme),
       appBarTheme: AppBarTheme(
-        backgroundColor: scheme.surface.withValues(alpha: 0.85),
+        backgroundColor: scheme.surfaceContainerLowest.withValues(alpha: 0.92),
         surfaceTintColor: Colors.transparent,
+        shape: Border(
+            bottom: BorderSide(
+                color: scheme.outlineVariant.withValues(alpha: 0.6))),
         elevation: 0,
         centerTitle: false,
         titleTextStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: scheme.onSurface),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: scheme.surface.withValues(alpha: 0.85),
-        indicatorColor: scheme.primaryContainer.withValues(alpha: 0.35),
+        indicatorColor: AppColors.pastelPurple,
         labelTextStyle: WidgetStatePropertyAll(
             GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500)),
       ),
@@ -87,7 +90,11 @@ class AppTheme {
       chipTheme: scheme.brightness == Brightness.light
           ? ChipThemeData(
               backgroundColor: AppColors.surfaceLow,
-              selectedColor: AppColors.primaryFixed,
+              selectedColor: AppColors.primary,
+              secondaryLabelStyle: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
               labelStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600),
             )

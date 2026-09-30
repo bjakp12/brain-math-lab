@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
+import 'logo_widget.dart';
 
 /// Komponen reusable sesuai spek Bagian V:
 /// TopAppBar, TimerBadge, ProgressBar, OptionCard, MetricCard,
@@ -16,17 +17,12 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(64);
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return AppBar(
       leading: showBack
           ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.of(context).maybePop())
-          : Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Container(
-                width: 36, height: 36,
-                decoration: BoxDecoration(color: scheme.primaryContainer, borderRadius: BorderRadius.circular(12)),
-                child: Icon(Icons.psychology, color: scheme.onPrimaryContainer, size: 20),
-              ),
+          : const Padding(
+              padding: EdgeInsets.only(left: 16),
+              child: LogoWidget(size: 36),
             ),
       title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
       actions: [

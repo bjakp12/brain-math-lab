@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/data/app_state.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/auth/auth_providers.dart';
+import '../../shared/widgets/logo_widget.dart';
 
 /// Layar 1 — Onboarding. Sesuai wireframe Stitch: hero brand, 3 value
 /// badges, pilih kemampuan (Pemula/Menengah/Mahir), target harian 2x2.
@@ -49,17 +51,7 @@ class _OnboardingState extends ConsumerState<OnboardingScreen> {
               ),
             ]),
             const SizedBox(height: 20),
-            Center(
-              child: Container(
-                width: 80, height: 80,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryContainer, AppColors.secondary]),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.25), blurRadius: 18, offset: const Offset(0, 8))],
-                ),
-                child: const Icon(Icons.all_inclusive, color: Colors.white, size: 44),
-              ),
-            ),
+            const Center(child: LogoWidget(size: 84)),
             const SizedBox(height: 12),
             Center(
               child: Container(
@@ -133,7 +125,21 @@ class _OnboardingState extends ConsumerState<OnboardingScreen> {
                           child: const Text('+50 XP', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700))),
                     ]),
             ),
-            TextButton(onPressed: () => context.go('/home'), child: const Text('Sudah punya akun? Masuk')),
+            OutlinedButton.icon(
+              onPressed: () async {
+                try {
+                  await signInWithGoogleAction(ref);
+                  if (context.mounted) context.go('/home');
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(e.toString())));
+                  }
+                }
+              },
+              icon: const Icon(Icons.account_circle_outlined, size: 18),
+              label: const Text('Masuk dengan Google'),
+            ),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Icon(Icons.verified_user_outlined, size: 13),
               const SizedBox(width: 4),

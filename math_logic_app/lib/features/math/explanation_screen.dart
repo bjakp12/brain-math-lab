@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/auth/auth_providers.dart';
 import '../../core/data/generators.dart';
+import '../../core/data/sync_engine.dart';
+import '../../core/logic/learner_model.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/widgets/app_widgets.dart';
 
 /// Layar 7 — Pembahasan Jawaban (banner benar/salah + langkah + jebakan).
-class ExplanationScreen extends StatelessWidget {
+class ExplanationScreen extends ConsumerWidget {
   final String categoryId; final int index; final String picked;
   const ExplanationScreen({super.key, required this.categoryId, required this.index, required this.picked});
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     final q = generateForCategory(categoryId, 2, index);
@@ -122,6 +126,19 @@ class ExplanationScreen extends StatelessWidget {
           const SizedBox(height: 12),
           FilledButton(
             onPressed: () {
+              // Catat upaya ke model adaptif + antrean sinkron (backend).
+              final attempt = Attempt(
+                topicId: categoryId,
+                tier: 2,
+                correct: picked == q.answer,
+                seconds: 15,
+                estimatedSec: q.estimatedTimeSec,
+              );
+              ref.read(learnerModelProvider).record(attempt);
+              ref
+                  .read(syncEngineProvider)
+                  .recordAttempt(attempt)
+                  .then((_) => ref.read(syncEngineProvider).flush());
               if (last) { context.push('/math/hasil?cat=$categoryId'); }
               else { context.push('/math/soal?cat=$categoryId&idx=${index + 1}'); }
             },

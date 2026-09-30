@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/data/app_state.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/auth/auth_providers.dart';
+import '../../shared/widgets/avatar_widget.dart';
+import '../donation/donation_sheet.dart';
 
 /// Layar 14 — Pengaturan: profil mini, tema, aksen, audio/haptik,
 /// gamifikasi, sinkronisasi, aksesibilitas, keluar.
@@ -32,8 +35,11 @@ class SettingsScreen extends ConsumerWidget {
             decoration: BoxDecoration(color: scheme.surfaceContainerLow, borderRadius: BorderRadius.circular(24)),
             child: Row(children: [
               Stack(alignment: Alignment.bottomRight, children: [
-                Container(width: 54, height: 54, decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                    child: const Icon(Icons.person, color: Colors.white, size: 30)),
+                AvatarWidget(
+                    name: p.name,
+                    photoUrl: p.photoUrl,
+                    size: 54,
+                    fontSize: 20),
                 Container(width: 18, height: 18, decoration: BoxDecoration(color: AppColors.tertiaryContainer, shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2)),
                     child: const Icon(Icons.verified, size: 10, color: Colors.white)),
@@ -63,6 +69,32 @@ class SettingsScreen extends ConsumerWidget {
               const Icon(Icons.chevron_right),
             ]),
           ),
+          const SizedBox(height: 10),
+          Row(children: [
+            Expanded(
+                child: FilledButton.tonal(
+                    onPressed: () => context.go('/profil'),
+                    child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.account_circle_outlined, size: 18),
+                          SizedBox(width: 6),
+                          Text('Akun Google',
+                              style: TextStyle(fontSize: 12)),
+                        ]))),
+            const SizedBox(width: 10),
+            Expanded(
+                child: FilledButton.tonal(
+                    onPressed: () => showDonationSheet(context),
+                    child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.volunteer_activism_outlined, size: 18),
+                          SizedBox(width: 6),
+                          Text('Donasi',
+                              style: TextStyle(fontSize: 12)),
+                        ]))),
+          ]),
           const SizedBox(height: 10),
           _Section(
             title: 'Tampilan & Tema Visual', icon: Icons.palette_outlined, trailing: 'Adaptif',
@@ -140,7 +172,9 @@ class SettingsScreen extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Text('Alarm Rutin Latihan', style: t.titleSmall),
                     const Spacer(),
-                    Switch(value: true, onChanged: (_) {}),
+                    Switch(
+                        value: s.dailyReminder,
+                        onChanged: (_) => not.toggleReminder()),
                   ]),
                   const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -244,7 +278,7 @@ class SettingsScreen extends ConsumerWidget {
               title: const Text('Keluar dari Akun?'),
               actions: [
                 TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal')),
-                FilledButton(onPressed: () { Navigator.pop(context); context.go('/onboarding'); }, child: const Text('Ya, Keluar')),
+                FilledButton(onPressed: () async { Navigator.pop(context); await signOutAction(ref); if (context.mounted) context.go('/onboarding'); }, child: const Text('Ya, Keluar')),
               ],
             )),
             child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [

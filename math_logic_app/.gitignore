@@ -62,3 +62,6 @@ Desktop.ini
 
 # Log build lokal (jangan commit)
 build.log
+
+# File konfigurasi lokal berisi secret (API key tool) — jangan commit
+opencode.json

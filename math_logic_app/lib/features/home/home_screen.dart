@@ -49,8 +49,8 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: scheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(24),
-                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4))]),
+              decoration: BoxDecoration(color: AppColors.pastelPurple, borderRadius: BorderRadius.circular(24),
+                  boxShadow: [BoxShadow(color: AppColors.pastelPurpleDeep.withValues(alpha: 0.25), blurRadius: 16, offset: const Offset(0, 6))]),
               child: Column(children: [
                 Row(children: [
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -93,7 +93,7 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(child: MetricCard(label: 'XP Hari Ini', value: '+${p.todayXp}', sub: '', icon: Icons.bolt, iconBg: AppColors.primaryFixed, iconFg: AppColors.primary)),
               const SizedBox(width: 8),
-              Expanded(child: MetricCard(label: 'Global Rank', value: '#${p.globalRank}', sub: '', icon: Icons.public, iconBg: AppColors.secondaryFixed, iconFg: AppColors.secondary)),
+              Expanded(child: MetricCard(label: 'Global Rank', value: p.globalRank <= 0 ? '–' : '#${p.globalRank}', sub: p.globalRank <= 0 ? 'Mainkan misi' : '', icon: Icons.public, iconBg: AppColors.secondaryFixed, iconFg: AppColors.secondary)),
             ]),
             const SizedBox(height: 12),
             Container(
@@ -109,8 +109,8 @@ class HomeScreen extends ConsumerWidget {
                 ]),
                 const SizedBox(height: 10),
                 Row(children: [
-                  Container(width: 48, height: 48, decoration: BoxDecoration(color: AppColors.primaryContainer, borderRadius: BorderRadius.circular(16)),
-                      child: const Icon(Icons.calculate, color: Colors.white, size: 26)),
+                  Container(width: 48, height: 48, decoration: BoxDecoration(color: AppColors.pastelYellow, borderRadius: BorderRadius.circular(16)),
+                      child: const Icon(Icons.calculate, color: AppColors.cocoaBrown, size: 26)),
                   const SizedBox(width: 12),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text('Pecahan & Desimal', style: t.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
@@ -232,8 +232,8 @@ class _RecoCard extends StatelessWidget {
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(meta, style: t.labelSmall),
           InkWell(onTap: onPlay, child: Container(width: 32, height: 32,
-              decoration: const BoxDecoration(color: AppColors.primaryFixed, shape: BoxShape.circle),
-              child: const Icon(Icons.play_arrow, size: 18, color: AppColors.primary))),
+              decoration: const BoxDecoration(color: AppColors.inkBlack, shape: BoxShape.circle),
+              child: const Icon(Icons.play_arrow, size: 18, color: Colors.white))),
         ]),
       ]),
     );

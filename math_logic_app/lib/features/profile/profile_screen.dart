@@ -4,7 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/data/app_state.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/auth/auth_providers.dart';
 import '../../shared/widgets/app_widgets.dart';
+import '../../shared/widgets/avatar_widget.dart';
+import '../donation/donation_sheet.dart';
 
 /// Layar 13 — Profil & Progres: identitas, radar chart 5 pilar, performa
 /// modul, lencana horizontal, riwayat latihan.
@@ -14,6 +17,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = ref.watch(profileProvider);
     final cog = ref.watch(cognitiveIndexProvider);
+    final isFresh = p.totalXp == 0 && p.streakDays == 0;
     final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
@@ -38,14 +42,8 @@ class ProfileScreen extends ConsumerWidget {
           ]),
           const SizedBox(height: 10),
           Row(children: [
-            Stack(alignment: Alignment.bottomRight, children: [
-              Container(width: 72, height: 72, decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [AppColors.primary, AppColors.secondary, AppColors.primaryContainer]),
-                  borderRadius: BorderRadius.circular(22)),
-                  child: const Icon(Icons.person, color: Colors.white, size: 40)),
-              Container(width: 24, height: 24, decoration: const BoxDecoration(color: AppColors.tertiary, shape: BoxShape.circle),
-                  child: const Icon(Icons.psychology, size: 13, color: Colors.white)),
-            ]),
+            AvatarWidget(
+                name: p.name, photoUrl: p.photoUrl, size: 72, fontSize: 26),
             const SizedBox(width: 12),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
@@ -59,13 +57,34 @@ class ProfileScreen extends ConsumerWidget {
               Text('Fokus: Aritmatika Cepat & Logika Deduktif', style: t.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis),
             ])),
           ]),
+          const SizedBox(height: 14),
+          const _AccountCard(),
           const SizedBox(height: 10),
-          Row(children: const [
-            _StatTile(label: 'TOTAL XP', value: '14.250', sub: '+420 mg ini', icon: Icons.bolt, color: AppColors.primary),
-            SizedBox(width: 8),
-            _StatTile(label: 'STREAK', value: '5 Hari', sub: 'Rekor: 18 hari', icon: Icons.local_fire_department, color: AppColors.tertiary),
-            SizedBox(width: 8),
-            _StatTile(label: 'LIGA', value: 'Top 5%', sub: 'Liga Berlian', icon: Icons.military_tech, color: AppColors.secondary),
+          const _DonateCard(),
+          const SizedBox(height: 14),
+          Row(children: [
+            _StatTile(
+                label: 'TOTAL XP',
+                value: '${p.totalXp}',
+                sub: p.todayXp > 0
+                    ? '+${p.todayXp} hari ini'
+                    : 'Mulai kumpulkan XP',
+                icon: Icons.bolt,
+                color: AppColors.primary),
+            const SizedBox(width: 8),
+            _StatTile(
+                label: 'STREAK',
+                value: '${p.streakDays} Hari',
+                sub: p.streakDays > 0 ? 'Terus pertahankan' : 'Mulai streak',
+                icon: Icons.local_fire_department,
+                color: AppColors.tertiary),
+            const SizedBox(width: 8),
+            _StatTile(
+                label: 'LIGA',
+                value: p.globalRank > 0 ? 'Top 5%' : '–',
+                sub: p.globalRank > 0 ? 'Liga Berlian' : 'Mainkan misi',
+                icon: Icons.military_tech,
+                color: AppColors.secondary),
           ]),
           const SizedBox(height: 10),
           Container(
@@ -85,7 +104,18 @@ class ProfileScreen extends ConsumerWidget {
                     ])),
               ]),
               const SizedBox(height: 6),
-              SizedBox(height: 250, child: CustomPaint(painter: _RadarPainter(values: cog))),
+              SizedBox(
+                  height: 250,
+                  child:
+                      CustomPaint(painter: _RadarPainter(values: cog))),
+              if (isFresh)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                      'Selesaikan latihan untuk mengisi radar kemampuanmu.',
+                      style: t.bodySmall,
+                      textAlign: TextAlign.center),
+                ),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(color: scheme.surfaceContainer, borderRadius: BorderRadius.circular(16)),
@@ -109,13 +139,37 @@ class ProfileScreen extends ConsumerWidget {
             Text('Bulan Ini', style: t.labelSmall?.copyWith(color: scheme.primary)),
           ]),
           const SizedBox(height: 8),
-          const _PerfRow(icon: Icons.calculate, color: AppColors.tertiary, title: 'Matematika', sub: '45 Sesi Selesai • Rata-rata 22 dtk', pct: 0.82, label: '82%'),
+          _PerfRow(
+              icon: Icons.calculate,
+              color: AppColors.tertiary,
+              title: 'Matematika',
+              sub: _perfSub(cog['Matematika']),
+              pct: cog['Matematika'] ?? 0,
+              label: _perfLabel(cog['Matematika'])),
           const SizedBox(height: 8),
-          const _PerfRow(icon: Icons.psychology_alt, color: AppColors.primary, title: 'Logika & Nalar', sub: '30 Sesi Selesai • Rata-rata 18 dtk', pct: 0.88, label: '88%'),
+          _PerfRow(
+              icon: Icons.psychology_alt,
+              color: AppColors.primary,
+              title: 'Logika & Nalar',
+              sub: _perfSub(cog['Logika']),
+              pct: cog['Logika'] ?? 0,
+              label: _perfLabel(cog['Logika'])),
           const SizedBox(height: 8),
-          const _PerfRow(icon: Icons.memory_outlined, color: AppColors.secondary, title: 'Memory Training', sub: '20 Sesi Selesai • Rata-rata 35 dtk', pct: 0.74, label: '74%'),
+          _PerfRow(
+              icon: Icons.memory_outlined,
+              color: AppColors.secondary,
+              title: 'Memory Training',
+              sub: _perfSub(cog['Memori']),
+              pct: cog['Memori'] ?? 0,
+              label: _perfLabel(cog['Memori'])),
           const SizedBox(height: 8),
-          const _PerfRow(icon: Icons.view_in_ar, color: AppColors.outline, title: 'Visual & Spasial', sub: '15 Sesi Selesai • Rata-rata 42 dtk', pct: 0.70, label: '70%'),
+          _PerfRow(
+              icon: Icons.view_in_ar,
+              color: AppColors.outline,
+              title: 'Visual & Spasial',
+              sub: _perfSub(cog['Visual']),
+              pct: cog['Visual'] ?? 0,
+              label: _perfLabel(cog['Visual'])),
           const SizedBox(height: 12),
           Row(children: [
             Text('Pencapaian & Lencana', style: t.titleMedium),
@@ -144,15 +198,35 @@ class ProfileScreen extends ConsumerWidget {
             const Spacer(),
             TextButton(onPressed: () {}, child: const Text('Filter', style: TextStyle(fontSize: 11))),
           ]),
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(color: scheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(22)),
-            child: Column(children: const [
-              _Hist(icon: Icons.percent, title: 'Pecahan & Desimal', sub: 'Hari ini, 09:15 • Akurasi 80%', score: '80/100', xp: '+80 XP'),
-              _Hist(icon: Icons.timer_outlined, title: 'Speed Math Aritmatika', sub: 'Kemarin, 19:40 • Akurasi 92%', score: '2.100 PTS', xp: '+60 XP'),
-              _Hist(icon: Icons.grid_4x4, title: 'Memory Maze Level 3', sub: '2 hari lalu • Selesai Sempurna', score: '100%', xp: '+50 XP'),
-            ]),
-          ),
+          if (isFresh)
+            const _EmptyHistoryCard()
+          else
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                  color: scheme.surfaceContainerLowest,
+                  borderRadius: BorderRadius.circular(22)),
+              child: Column(children: const [
+                _Hist(
+                    icon: Icons.percent,
+                    title: 'Pecahan & Desimal',
+                    sub: 'Hari ini, 09:15 • Akurasi 80%',
+                    score: '80/100',
+                    xp: '+80 XP'),
+                _Hist(
+                    icon: Icons.timer_outlined,
+                    title: 'Speed Math Aritmatika',
+                    sub: 'Kemarin, 19:40 • Akurasi 92%',
+                    score: '2.100 PTS',
+                    xp: '+60 XP'),
+                _Hist(
+                    icon: Icons.grid_4x4,
+                    title: 'Memory Maze Level 3',
+                    sub: '2 hari lalu • Selesai Sempurna',
+                    score: '100%',
+                    xp: '+50 XP'),
+              ]),
+            ),
           const SizedBox(height: 10),
           Center(
             child: Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -176,7 +250,7 @@ class _StatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(18)),
         child: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -251,7 +325,7 @@ class _Hist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       child: Row(children: [
         Container(width: 40, height: 40, decoration: BoxDecoration(color: AppColors.primaryFixed.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(12)),
             child: Icon(icon, color: AppColors.primary, size: 19)),
@@ -262,7 +336,11 @@ class _Hist extends StatelessWidget {
         ])),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text(score, style: Theme.of(context).textTheme.titleSmall),
-          const Text('+80 XP', style: TextStyle(fontSize: 10, color: AppColors.tertiary, fontWeight: FontWeight.w700)),
+          Text(xp,
+              style: const TextStyle(
+                  fontSize: 10,
+                  color: AppColors.tertiary,
+                  fontWeight: FontWeight.w700)),
         ]),
       ]),
     );
@@ -325,12 +403,172 @@ class _RadarPainter extends CustomPainter {
       tp.paint(canvas, p - Offset(tp.width / 2, tp.height / 2));
     }
 
-    label(0, 'Matematika', '85%', AppColors.primary);
-    label(1, 'Logika', '90%', AppColors.tertiary);
-    label(2, 'Memori', '75%', AppColors.primary);
-    label(3, 'Visual', '70%', AppColors.secondary);
-    label(4, 'Refleks', '80%', AppColors.primary);
+    label(0, 'Matematika', _pct(values['Matematika']), AppColors.primary);
+    label(1, 'Logika', _pct(values['Logika']), AppColors.tertiary);
+    label(2, 'Memori', _pct(values['Memori']), AppColors.primary);
+    label(3, 'Visual', _pct(values['Visual']), AppColors.secondary);
+    label(4, 'Refleks', _pct(values['Refleks']), AppColors.primary);
   }
   @override
   bool shouldRepaint(covariant CustomPainter old) => false;
+}
+
+String _pct(double? v) => '${(((v ?? 0).clamp(0.0, 1.0)) * 100).round()}%';
+
+String _perfSub(double? v) =>
+    (v ?? 0) <= 0 ? 'Belum ada sesi' : 'Akurasi ${_pct(v)}';
+
+String _perfLabel(double? v) => _pct(v);
+
+/// Kartu akun: status tamu/Google + tombol masuk/keluar.
+class _AccountCard extends ConsumerWidget {
+  const _AccountCard();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userAsync = ref.watch(appUserProvider);
+    final t = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+          color: scheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(24)),
+      child: userAsync.when(
+        loading: () => const Center(
+            child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2))),
+        error: (e, _) =>
+            Text('Akun: mode tamu ($e)', style: t.bodySmall),
+        data: (u) => Row(children: [
+          AvatarWidget(
+              name: u.name, photoUrl: u.photoUrl, size: 48, fontSize: 18),
+          const SizedBox(width: 12),
+          Expanded(
+              child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(u.isGuest ? 'Mode Tamu' : u.name, style: t.titleSmall),
+            Text(
+                u.isGuest
+                    ? 'Masuk Google untuk sinkronisasi cloud'
+                    : u.email,
+                style: t.bodySmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis),
+          ])),
+          const SizedBox(width: 8),
+          u.isGuest
+              ? FilledButton.tonal(
+                  onPressed: () => _signIn(context, ref),
+                  child:
+                      const Text('Google', style: TextStyle(fontSize: 12)))
+              : TextButton(
+                  onPressed: () => _signOut(context, ref),
+                  child:
+                      const Text('Keluar', style: TextStyle(fontSize: 12))),
+        ]),
+      ),
+    );
+  }
+
+  Future<void> _signIn(BuildContext context, WidgetRef ref) async {
+    try {
+      await signInWithGoogleAction(ref);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Masuk berhasil. Progres disinkronkan.')));
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
+
+  Future<void> _signOut(BuildContext context, WidgetRef ref) async {
+    await signOutAction(ref);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Keluar. Data lokal tetap tersimpan.')));
+    }
+  }
+}
+
+/// Kartu donasi: membuka bottom sheet PayPal + QRIS.
+class _DonateCard extends StatelessWidget {
+  const _DonateCard();
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    return InkWell(
+      onTap: () => showDonationSheet(context),
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: AppColors.pastelYellow,
+            borderRadius: BorderRadius.circular(24)),
+        child: Row(children: [
+          Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(14)),
+              child: const Icon(Icons.volunteer_activism,
+                  color: AppColors.cocoaBrown)),
+          const SizedBox(width: 12),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text('Dukung Pengembangan',
+                    style: t.titleSmall
+                        ?.copyWith(color: AppColors.cocoaBrown)),
+                const Text('Donasi via PayPal atau QRIS',
+                    style: TextStyle(
+                        fontSize: 12, color: AppColors.cocoaBrown)),
+              ])),
+          const Icon(Icons.chevron_right, color: AppColors.cocoaBrown),
+        ]),
+      ),
+    );
+  }
+}
+
+/// Empty state riwayat untuk pengguna baru (tanpa angka demo).
+class _EmptyHistoryCard extends StatelessWidget {
+  const _EmptyHistoryCard();
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+          color: scheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(24)),
+      child: Column(children: [
+        Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+                color: AppColors.pastelPurple,
+                borderRadius: BorderRadius.circular(16)),
+            child:
+                const Icon(Icons.rocket_launch_outlined, color: AppColors.inkBlack, size: 26)),
+        const SizedBox(height: 12),
+        Text('Belum ada riwayat latihan', style: t.titleSmall),
+        const SizedBox(height: 4),
+        Text('Selesaikan sesi pertamamu — skor & XP tercatat di sini.',
+            style: t.bodySmall, textAlign: TextAlign.center),
+        const SizedBox(height: 12),
+        FilledButton.tonal(
+            onPressed: () => context.go('/modul'),
+            child: const Text('Mulai Latihan Pertama')),
+      ]),
+    );
+  }
 }
