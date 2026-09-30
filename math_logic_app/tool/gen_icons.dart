@@ -31,7 +31,7 @@ void save(Image img, String path) {
   File(path)
     ..createSync(recursive: true)
     ..writeAsBytesSync(encodePng(img));
-  print('wrote $path (${img.width}x${img.height})');
+  stdout.writeln('wrote $path (${img.width}x${img.height})');
 }
 
 void main() {
@@ -79,5 +79,5 @@ void main() {
       font: arial24, x: 520, y: 312, color: ColorRgb8(255, 255, 255));
   save(fg, 'store/feature-graphic.png');
 
-  print('DONE: ${android.length + iosIcons.length + 1} files');
+  stdout.writeln('DONE: ${android.length + iosIcons.length + 1} files');
 }

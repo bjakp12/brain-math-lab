@@ -15,7 +15,7 @@ class ResultScreen extends ConsumerWidget {
     final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: const TimerBadge('00:45')),
+      appBar: const AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: TimerBadge('00:45')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -88,7 +88,7 @@ class ResultScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(color: scheme.surfaceContainerLowest, borderRadius: BorderRadius.circular(18)),
-            child: Column(children: const [
+            child: const Column(children: [
               _RewardRow(icon: Icons.stars, iconBg: AppColors.secondaryFixed, title: 'XP Latihan', sub: 'Sesi drill Pecahan harian', trailing: '+80 XP', primary: true),
               Divider(height: 20),
               _RewardRow(icon: Icons.workspace_premium, iconBg: AppColors.tertiaryFixed, title: 'Master Pecahan Lv. 2', sub: 'Terbuka setelah 5x latihan akurat', trailing: 'Baru!'),
@@ -138,7 +138,7 @@ class ResultScreen extends ConsumerWidget {
               Text('3 dari 5 benar (2 keliru pada penyebut besar)', style: t.bodySmall),
               const SizedBox(height: 6),
               const AppProgressBar(0.6),
-              TextButton(onPressed: null, child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: const [
+              TextButton(onPressed: null, child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Text('Review 2 Soal Salah'), Icon(Icons.arrow_forward, size: 16),
               ])),
             ]),

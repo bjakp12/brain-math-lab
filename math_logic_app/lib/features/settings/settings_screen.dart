@@ -219,11 +219,11 @@ class SettingsScreen extends ConsumerWidget {
                     ])),
                     Icon(Icons.circle, size: 10, color: AppColors.tertiaryFixedDim),
                   ]),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   ClipRRect(borderRadius: BorderRadius.circular(999),
                       child: LinearProgressIndicator(value: 1.0, minHeight: 6,
                           backgroundColor: scheme.surfaceContainerHighest, valueColor: const AlwaysStoppedAnimation(AppColors.primary))),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   FilledButton.tonal(
                       onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Berhasil Disinkronkan ✅'))),

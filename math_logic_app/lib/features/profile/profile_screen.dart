@@ -206,7 +206,7 @@ class ProfileScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                   color: scheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(22)),
-              child: Column(children: const [
+              child: const Column(children: [
                 _Hist(
                     icon: Icons.percent,
                     title: 'Pecahan & Desimal',

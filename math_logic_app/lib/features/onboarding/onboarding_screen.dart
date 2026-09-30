@@ -67,7 +67,7 @@ class _OnboardingState extends ConsumerState<OnboardingScreen> {
             Text('Latih 5 pilar kognitif otakmu dengan sesi interaktif adaptif hanya 10 menit sehari.',
                 textAlign: TextAlign.center, style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
             const SizedBox(height: 14),
-            Row(children: const [
+            const Row(children: [
               _ValueBadge(icon: Icons.bolt, title: '10 Mnt/Hari', sub: 'Retensi Otak'),
               SizedBox(width: 8),
               _ValueBadge(icon: Icons.auto_fix_high, title: 'Adaptif AI', sub: 'Personal Level'),
@@ -114,7 +114,7 @@ class _OnboardingState extends ConsumerState<OnboardingScreen> {
                 ref.read(profileProvider.notifier).setDailyTarget(minutes);
                 ref.read(profileProvider.notifier).addXp(50);
                 await Future.delayed(const Duration(milliseconds: 700));
-                if (mounted) context.go('/home');
+                if (context.mounted) context.go('/home');
               },
               child: loading
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))

@@ -44,6 +44,6 @@ Future<void> main() async {
   final f = File('assets/bank/bank.json');
   f.writeAsStringSync(jsonEncode(out));
   final kb = f.lengthSync() ~/ 1024;
-  print('topics=${kTopics().length} tiers=4 seeds=$seedsPerTier '
+  stdout.writeln('topics=${kTopics().length} tiers=4 seeds=$seedsPerTier '
       'total=${out.length} size=${kb}KB -> ${f.path}');
 }

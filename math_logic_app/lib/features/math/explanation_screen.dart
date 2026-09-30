@@ -20,7 +20,7 @@ class ExplanationScreen extends ConsumerWidget {
     final correct = picked == q.answer;
     final last = index >= 9;
     return Scaffold(
-      appBar: AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: const TimerBadge('00:45')),
+      appBar: const AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: TimerBadge('00:45')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -46,9 +46,9 @@ class ExplanationScreen extends ConsumerWidget {
                     style: const TextStyle(color: Colors.white70, fontSize: 13)),
               ),
               const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.only(left: 40),
-                child: Wrap(spacing: 8, children: const [
+              const Padding(
+                padding: EdgeInsets.only(left: 40),
+                child: Wrap(spacing: 8, children: [
                   Pill('+10 Poin', bg: Colors.white24, fg: Colors.white, icon: Icons.stars),
                   Pill('15 detik', bg: Colors.white24, fg: Colors.white, icon: Icons.timer_outlined),
                   Pill('🔥 3x Streak', bg: AppColors.tertiaryFixed, fg: AppColors.onTertiaryFixed),

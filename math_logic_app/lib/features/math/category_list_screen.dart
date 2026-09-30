@@ -27,7 +27,7 @@ class _CategoryListState extends State<CategoryListScreen> {
       return okF && okQ;
     }).toList();
     return Scaffold(
-      appBar: AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: const TimerBadge('00:45')),
+      appBar: const AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: TimerBadge('00:45')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         child: Column(children: [

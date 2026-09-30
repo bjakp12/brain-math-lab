@@ -71,7 +71,7 @@ void main() {
 
     test('enqueue lalu flush mengosongkan antrean', () async {
       final sent = <Map<String, dynamic>>[];
-      final engine = SyncEngine(
+      const engine = SyncEngine(
         isOnline: () async => true,
         remote: (batch) async => sent.addAll(batch),
       );
@@ -90,7 +90,7 @@ void main() {
 
     test('offline menahan antrean', () async {
       var calls = 0;
-      final engine = SyncEngine(
+      const engine = SyncEngine(
         isOnline: () async => false,
         remote: (_) async => calls++,
       );

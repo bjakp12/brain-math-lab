@@ -33,8 +33,8 @@ class _VisualState extends State<VisualTrainingScreen> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(color: scheme.surfaceContainerLow, borderRadius: BorderRadius.circular(24)),
-            child: Column(children: [
-              const Row(children: [
+            child: const Column(children: [
+              Row(children: [
                 Pill('Soal 2 dari 5', bg: AppColors.secondaryContainer, fg: Colors.white),
                 SizedBox(width: 6),
                 Pill('+40 XP Focus', bg: AppColors.tertiaryContainer, fg: Colors.white, icon: Icons.bolt),

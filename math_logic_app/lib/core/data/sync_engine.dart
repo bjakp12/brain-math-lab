@@ -41,7 +41,7 @@ class SyncEngine {
   static const _key = 'sync_outbox_v1';
   final RemoteSender remote;
   final Future<bool> Function() isOnline;
-  SyncEngine({this.remote = _devNullSender, Future<bool> Function()? isOnline})
+  const SyncEngine({this.remote = _devNullSender, Future<bool> Function()? isOnline})
       : isOnline = isOnline ??
             (() async {
               final r = await Connectivity().checkConnectivity();

@@ -177,7 +177,7 @@ class _DonationSheetState extends State<_DonationSheet> {
                 );
               },
               icon: const Icon(Icons.copy, size: 16),
-              label: Text('Salin: ${DonationConfig.merchantName}'),
+              label: const Text('Salin: ${DonationConfig.merchantName}'),
             ),
           ]),
         ],

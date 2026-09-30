@@ -14,7 +14,7 @@ class MaterialDetailScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final subs = pecahanSubMateri();
     return Scaffold(
-      appBar: AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: const TimerBadge('00:45')),
+      appBar: const AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: TimerBadge('00:45')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -52,7 +52,7 @@ class MaterialDetailScreen extends StatelessWidget {
                 Expanded(child: AppProgressBar(0.0)),
               ]),
               const SizedBox(height: 10),
-              Row(children: const [
+              const Row(children: [
                 _MiniStat(icon: Icons.schedule, label: 'Estimasi', value: '15 Menit'),
                 SizedBox(width: 8),
                 _MiniStat(icon: Icons.stars, label: 'Reward', value: '+40 XP', valueColor: AppColors.primary),
@@ -86,13 +86,13 @@ class MaterialDetailScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(color: scheme.surfaceContainerLow, borderRadius: BorderRadius.circular(12)),
-                    child: Column(children: [
+                    child: const Column(children: [
                       const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         Text('Representasi Nilai Ekuivalen:', style: TextStyle(fontSize: 11)),
                         Text('Nilai Sama', style: TextStyle(fontSize: 11, color: AppColors.primary, fontWeight: FontWeight.w700)),
                       ]),
                       const SizedBox(height: 6),
-                      Row(children: const [
+                      const Row(children: [
                         _FracCell(v: '1/2', s: 'Sederhana', hl: true),
                         SizedBox(width: 6),
                         _FracCell(v: '2/4', s: 'Senilai'),

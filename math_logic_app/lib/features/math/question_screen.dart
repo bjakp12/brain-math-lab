@@ -22,10 +22,10 @@ class _QuestionState extends State<QuestionScreen> {
     final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     final q = generateForCategory(widget.categoryId, 2, widget.index);
-    final total = 10;
+    const total = 10;
     final pct = (widget.index + 1) / total;
     return Scaffold(
-      appBar: AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: const TimerBadge('00:45')),
+      appBar: const AppTopBar(title: 'Latihan Pecahan', showBack: true, timer: TimerBadge('00:45')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
