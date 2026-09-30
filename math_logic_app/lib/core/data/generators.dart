@@ -25,6 +25,10 @@ Question _mk({
     [correct, correctSub],
     ...wrong,
   ];
+  // Pengaman waktu development: setiap soal wajib tepat 4 opsi
+  // (1 benar + 3 salah). Gagal di sini = bug generator, bukan data.
+  assert(wrong.length == 3,
+      '$topicId T$tier: wrong harus 3 opsi, dapat ${wrong.length}');
   final rot = seed % 4;
   final ordered = List<List<String>>.generate(4, (i) => pool[(i + rot) % 4]);
   var ansIdx = 0;
@@ -54,6 +58,8 @@ Question _mk({
 }
 
 int _fpb(int a, int b) => b == 0 ? a : _fpb(b, a % b);
+
+String _b(bool v) => v ? 'benar' : 'salah';
 
 // ---------------------------------------------------------------------------
 // Generator utama
@@ -304,23 +310,42 @@ Question generateDynamic(String topicId, int tier, int seed) {
     }
     case 'al_logika': {
       final pv = R.nextBool(), qv = R.nextBool();
-      final ps = pv ? 'benar' : 'salah', qs = qv ? 'benar' : 'salah';
-      final and = pv && qv, or = pv || qv, imp = !pv || qv;
-      if (tier <= 2) {
+      final ps = _b(pv), qs = _b(qv);
+      final vals = <String, bool>{
+        'p ∧ q': pv && qv,
+        'p ∨ q': pv || qv,
+        '¬p': !pv,
+        'p → q': !pv || qv,
+      };
+      final trues =
+          vals.entries.where((e) => e.value).map((e) => e.key).toList();
+      final falses =
+          vals.entries.where((e) => !e.value).map((e) => e.key).toList();
+      if (trues.length == 1) {
         return _mk(topicId: topicId, tier: tier, seed: seed,
-          stem: 'p $ps, q $qs. Nilai p ∧ q?', hint: '∧ benar hanya jika keduanya benar.',
-          correct: and ? 'Benar' : 'Salah',
-          wrong: and ? [['Salah', '']] : [['Benar', '']],
-          steps: ['p=$ps, q=$qs → p∧q = ${and ? 'benar' : 'salah'}.'], pitfall: 'Tertukar dengan ∨ (atau).');
+          stem: 'p $ps, q $qs. Manakah pernyataan yang BENAR?',
+          hint: 'Uji tiap operator satu per satu.',
+          correct: trues.first, correctSub: 'benar',
+          wrong: [for (final f in falses) [f, 'salah']],
+          steps: [
+            'p∧q=${_b(pv && qv)}, p∨q=${_b(pv || qv)}.',
+            '¬p=${_b(!pv)}, p→q=${_b(!pv || qv)}.',
+          ],
+          pitfall: 'Implikasi (→) salah hanya bila benar → salah.');
       }
-      final target = ['p ∨ q', 'p → q', '¬p'][R.nextInt(3)];
-      final val = target == 'p ∨ q' ? or : target == 'p → q' ? imp : !pv;
-      return _mk(topicId: topicId, tier: tier, seed: seed,
-        stem: 'p $ps, q $qs. Nilai $target?', hint: target == 'p → q' ? 'Implikasi salah hanya jika benar → salah.' : 'Uji tiap operator.',
-        correct: val ? 'Benar' : 'Salah',
-        wrong: val ? [['Salah', '']] : [['Benar', '']],
-        steps: ['Dengan p=$ps, q=$qs → $target = ${val ? 'benar' : 'salah'}.'],
-        pitfall: 'Implikasi sering disangka seperti konjungsi.');
+      if (falses.length == 1) {
+        return _mk(topicId: topicId, tier: tier, seed: seed,
+          stem: 'p $ps, q $qs. Manakah pernyataan yang SALAH?',
+          hint: 'Tiga di antaranya benar — cari pengecualiannya.',
+          correct: falses.first, correctSub: 'salah',
+          wrong: [for (final f in trues) [f, 'benar']],
+          steps: [
+            'p∧q=${_b(pv && qv)}, p∨q=${_b(pv || qv)}.',
+            '¬p=${_b(!pv)}, p→q=${_b(!pv || qv)}.',
+          ],
+          pitfall: 'Jangan terkecoh operator yang terlihat meyakinkan.');
+      }
+      return generateDynamic(topicId, tier, seed + 1);
     }
     case 'al_kuadrat': {
       final r1 = 1 + R.nextInt(2 + tier * 2), r2 = 2 + R.nextInt(3 + tier * 2);

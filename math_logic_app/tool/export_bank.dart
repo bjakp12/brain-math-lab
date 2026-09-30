@@ -12,8 +12,10 @@ Future<void> main() async {
   for (final t in kTopics()) {
     for (var tier = 1; tier <= 4; tier++) {
       for (var s = 0; s < seedsPerTier; s++) {
-        final q = generateDynamic(t.id, tier, s * 7 + 1);
-        out.add({
+        final seed = s * 7 + 1;
+        try {
+          final q = generateDynamic(t.id, tier, seed);
+          out.add({
           'id': q.id,
           'topic': q.subCategoryId,
           'category': q.categoryId,
@@ -30,7 +32,11 @@ Future<void> main() async {
           'pitfall': q.pitfall,
           'estimatedSec': q.estimatedTimeSec,
           'xp': q.xpReward,
-        });
+          });
+        } catch (e) {
+          // Gagal dengan konteks topik — jangan telan errornya.
+          throw StateError('Export gagal di ${t.id} T$tier seed $seed: $e');
+        }
       }
     }
   }
