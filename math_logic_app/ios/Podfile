@@ -1,0 +1,52 @@
+# Podfile — min iOS 15.0 (cakupan iOS 15 → 27).
+# PENTING: Xcode 27 menolak deployment target < 15.0
+# ("Target Integrity ... range 15.0 to 27.0.x"), jadi iOS 14 tidak bisa
+# dipakai dengan toolchain saat ini. Daftar perangkat iOS 14 ≡ iOS 15
+# (iPhone 6s ke atas), sehingga cakupan perangkat tetap sama.
+# Dibangun dengan Xcode 27 / SDK iOS 27. Lihat BUILD_MATRIX.md.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+platform :ios, '15.0'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. Run `flutter pub get` first."
+  end
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}."
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+  use_frameworks!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    # Paksa semua pod ke min iOS 15.0 (sejajar target aplikasi).
+    # Tanpa ini, pod lama (target 9.0/12.0) menggagalkan build di Xcode 27.
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    end
+  end
+end
